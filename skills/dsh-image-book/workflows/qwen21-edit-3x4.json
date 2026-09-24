@@ -1,0 +1,105 @@
+{
+     "1": {
+         "class_type": "UNETLoader",
+         "inputs": {
+             "unet_name": "qwen_image_2.1_bf16.safetensors",
+             "weight_dtype": "default"
+         }
+     },
+     "2": {
+         "class_type": "CLIPLoader",
+         "inputs": {
+             "clip_name": "qwen3vl_8b_bf16.safetensors",
+             "type": "qwen_image",
+             "device": "default"
+         }
+     },
+     "3": {
+         "class_type": "VAELoader",
+         "inputs": {
+             "vae_name": "qwen_image_2.1_vae_bf16.safetensors"
+         }
+     },
+     "4": {
+         "class_type": "TextEncodeQwenImageEdit",
+         "inputs": {
+             "clip": [
+                 "2",
+                 0
+             ],
+             "prompt": "{{prompt}}",
+             "vae": [
+                 "3",
+                 0
+             ],
+             "image": [
+                 "5",
+                 0
+             ]
+         }
+     },
+     "5": {
+         "class_type": "LoadImage",
+         "inputs": {
+             "image": "{{ref}}"
+         }
+     },
+     "6": {
+         "class_type": "KSampler",
+         "inputs": {
+             "model": [
+                 "1",
+                 0
+             ],
+             "positive": [
+                 "4",
+                 0
+             ],
+             "negative": [
+                 "4",
+                 0
+             ],
+             "latent_image": [
+                 "7",
+                 0
+             ],
+             "seed": "{{seed}}",
+             "steps": 25,
+             "cfg": 1,
+             "sampler_name": "euler",
+             "scheduler": "simple",
+             "denoise": 1
+         }
+     },
+     "7": {
+         "class_type": "EmptyLatentImage",
+         "inputs": {
+             "width": 1008,
+             "height": 1344,
+             "batch_size": 1
+         }
+     },
+     "8": {
+         "class_type": "VAEDecode",
+         "inputs": {
+             "samples": [
+                 "6",
+                 0
+             ],
+             "vae": [
+                 "3",
+                 0
+             ]
+         }
+     },
+     "9": {
+         "class_type": "SaveImage",
+         "inputs": {
+             "filename_prefix": "dsh_image_gen",
+             "images": [
+                 "8",
+                 0
+             ]
+         }
+     }
+}
