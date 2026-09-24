@@ -1,0 +1,34 @@
+# Generated outputs (do not commit user-generated PDFs/PNGs)
+*.png
+*.jpg
+*.jpeg
+*.pdf
+!examples/.gitkeep
+
+# ...but the README screenshots and sample output stay in the repo
+!docs/images/
+!docs/images/**
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Swift / Xcode
+.build/
+*.xcodeproj/
+DerivedData/
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# User-specific prompts (work in progress)
+my-book*.json
+my-*.json
+*book.json
