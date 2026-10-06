@@ -15,6 +15,7 @@ Each skill in this repository is a self-contained directory with a `SKILL.md` at
 | Skill | What it does | Needs |
 |-------|--------------|-------|
 | [**dsh-image-book**](skills/dsh-image-book/) | Generates complete English picture-comic books (绘本 / 漫画) end to end: story design, character-consistent page prompts, ComfyUI generation, OCR verification of rendered text, PDF binding. | macOS, Python 3.9+, Swift CLI, a local ComfyUI server with Qwen-Image-2.1 |
+| [**dsh-character-card**](skills/dsh-character-card/) | Turns one image of any character into a character design card (角色卡): front / 45° / side / back views, expressions, detail crops, identity-locked via Qwen-Image-2.1 reference mode, plus a reusable character block for downstream consistency. | Python 3.9+ with Pillow, a ComfyUI server with Qwen-Image-2.1 |
 
 *More skills land here as they are packaged. Each one keeps its own README with setup and usage detail.*
 
