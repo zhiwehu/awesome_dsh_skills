@@ -6,7 +6,7 @@ description: Generate a character design card (角色卡) from ANY single charac
 # dsh-character-card · Character Card Generator (ComfyUI + Qwen-Image-2.1)
 
 Turn **one arbitrary image of a character** into a production-ready character card:
-full-body 转面 views (正面 / 45° / 侧面 / 背面), facial expressions, detail crops —
+转面 views (正面 / 45° / 侧面 / 背面; four full-body views with `--split`), facial expressions, detail crops —
 plus a **verbatim character block** file for keeping the character consistent in
 all downstream generation.
 
@@ -29,9 +29,23 @@ input image itself, not just words.
 |------|---------|
 | `workflows/char-card-3x4.json` | ComfyUI API workflow: Qwen-Image-2.1, 1008×1344, `{{prompt}}` + `{{ref}}` + `{{seed}}` |
 | `scripts/char_card_gen.py` | CLI driver: resizes ref to /32, uploads, builds sheet prompt, submits, polls, downloads, writes character block |
-| `examples/` | Example invocations |
+| `docs/images/` | Sample card and derived action images |
 
 ## Quick start
+
+Install from the repository root with `./install.sh dsh-character-card`, then
+reload your DSH session. For direct CLI use, enter the skill directory first:
+
+```bash
+# From the repository root; for a user install, use "${DSH_HOME:-$HOME/.dsh}/skills/dsh-character-card"
+cd skills/dsh-character-card
+python3 -m pip install pillow
+```
+
+Resolve `scripts/char_card_gen.py` relative to this skill's directory, not the
+user's project working directory. Pass an absolute input image path when changing directories.
+The default sheet has front/side/back full-body views and a 45° walking
+three-quarter-length view; use `--split` for four full-body standing views.
 
 ```bash
 # Minimal: card from any character image (defaults: Ghibli watercolor style)
@@ -103,7 +117,17 @@ Outputs land in `<image_dir>/charcard/` by default:
 
 ## Downstream use
 
-Point later pages at the card with reference mode from `dsh-image-book`:
+For this optional downstream workflow, separately install `dsh-image-book`.
+It is not required to generate cards. First generate the file used below:
+
+```bash
+python3 scripts/char_card_gen.py /absolute/path/to/girl.png --name Mio --split
+```
+
+Point later pages at the resulting card with reference mode from `dsh-image-book`.
+Resolve `ref` from the downstream prompt file's directory; adjust or use an absolute
+path if that file is not beside the source image:
+
 
 ```json
 { "p1": { "file": "p1.png", "ref": "charcard/mio-card-poses.png", "prompt": "... [verbatim block] ..." } }

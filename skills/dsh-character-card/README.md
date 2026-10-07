@@ -1,8 +1,8 @@
 # dsh-character-card
 
 Turn **one image of any character** into a production-ready character design card (角色卡)
-using ComfyUI + **Qwen-Image-2.1** reference mode: front / 45° / side / back full-body
-views, a set of facial expressions, and detail crops — all identity-locked to the input
+using ComfyUI + **Qwen-Image-2.1** reference mode: front / side / back full-body views and a 45° walking view
+(four full-body views with `--split`), a set of facial expressions, and detail crops — all identity-locked to the input
 image — plus a reusable verbatim character block for downstream consistency.
 
 ## The problem it solves
@@ -27,6 +27,20 @@ words helps but cannot carry a face. A character card solves it twice:
 - Server URL via `--server` or the `COMFYUI_SERVER` env var (default `http://127.0.0.1:8188`)
 
 ## Quick start
+
+Install from the repository root with `./install.sh dsh-character-card`, then
+reload your DSH session. For direct CLI use, enter the skill directory first:
+
+```bash
+# From the repository root; for a user install, use "${DSH_HOME:-$HOME/.dsh}/skills/dsh-character-card"
+cd skills/dsh-character-card
+python3 -m pip install pillow
+```
+
+Resolve `scripts/char_card_gen.py` relative to this skill's directory, not the
+user's project working directory. Pass an absolute input image path when changing directories.
+The default sheet has front/side/back full-body views and a 45° walking
+three-quarter-length view; use `--split` for four full-body standing views.
 
 ```bash
 # Minimal: card from any character image

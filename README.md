@@ -52,6 +52,7 @@ cp -R skills/dsh-image-book /path/to/project/.dsh/skills/
 Or use the helper, which does the copying for you:
 
 ```bash
+./install.sh dsh-character-card          # → ~/.dsh/skills/
 ./install.sh dsh-image-book              # → ~/.dsh/skills/
 ./install.sh dsh-image-book --agents     # → ~/.agents/skills/
 ./install.sh --all --project             # every skill → ./.dsh/skills/
@@ -66,7 +67,7 @@ Reload your DSH session afterwards. Skills are selected by the `description` fie
 ```
 my-skill/
 ├── SKILL.md          ← required: YAML frontmatter (name, description) + the instructions
-├── README.md         ← optional: human-facing docs
+├── README.md         ← required in this repository: human-facing docs
 ├── scripts/          ← optional: code the skill runs
 ├── examples/         ← optional: reference inputs
 └── LICENSE
@@ -97,7 +98,8 @@ awesome_dsh_skills/
 ├── install.sh
 ├── docs/images/              ← screenshots used by this README
 └── skills/
-    └── dsh-image-book/       ← one directory per skill
+    ├── dsh-image-book/       ← one directory per skill
+    └── dsh-character-card/
 ```
 
 ---

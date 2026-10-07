@@ -21,6 +21,7 @@ Examples:
   python3 char_card_gen.py girl.png --split   # separate poses + expressions cards
 """
 import argparse, json, os, sys, time, urllib.request, urllib.parse
+from io import BytesIO
 from PIL import Image
 
 TEMPLATE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "workflows", "char-card-3x4.json")
@@ -69,6 +70,7 @@ SPLIT_EXPR = (
 )
 
 DEFAULT_EXPRESSIONS = "gentle smile; surprised wide eyes; sad teary eyes; laughing happily"
+DEFAULT_SPLIT_EXPRESSIONS = DEFAULT_EXPRESSIONS + "; angry pout; thoughtful gaze"
 DEFAULT_DETAILS = "the face, hairstyle and signature accessory; hands, footwear and any carried items"
 
 RENDER_RULES = (
@@ -109,16 +111,16 @@ def upload_ref(server, local_path, name):
         new = (round(w * scale / 32) * 32, round(h * scale / 32) * 32)
     else:
         new = (round(w / 32) * 32 or 32, round(h / 32) * 32 or 32)
+    new = tuple(max(32, side) for side in new)
     if new != (w, h):
         im = im.resize(new, Image.LANCZOS)
-    tmp = os.path.join("/tmp", name)
-    im.save(tmp, "PNG")
+    image_bytes = BytesIO()
+    im.save(image_bytes, "PNG")
     boundary = "----dshcharcard"
     body = (f"--{boundary}\r\n"
             f'Content-Disposition: form-data; name="image"; filename="{name}"\r\n'
             f"Content-Type: image/png\r\n\r\n").encode()
-    with open(tmp, "rb") as f:
-        body += f.read()
+    body += image_bytes.getvalue()
     body += (f"\r\n--{boundary}\r\n"
              'Content-Disposition: form-data; name="overwrite"\r\n\r\ntrue\r\n'
              f"--{boundary}--\r\n").encode()
@@ -126,7 +128,7 @@ def upload_ref(server, local_path, name):
                                  headers={"Content-Type": f"multipart/form-data; boundary={boundary}"})
     with urllib.request.urlopen(req, timeout=120) as r:
         res = json.loads(r.read())
-    return res["name"], tmp, im.size
+    return res["name"], os.path.abspath(local_path), im.size
 
 
 def generate(server, prompt, ref_name, out_path, seed, template=TEMPLATE,
@@ -222,7 +224,7 @@ def main():
     ap.add_argument("--name", default=None, help="character name (default: image stem)")
     ap.add_argument("--style", default="Ghibli-style watercolor anime",
                     help="art style for the sheet (default: Ghibli watercolor)")
-    ap.add_argument("--expressions", default=DEFAULT_EXPRESSIONS,
+    ap.add_argument("--expressions", default=None,
                     help="semicolon-separated expression list (4 for single card, 6 for --split)")
     ap.add_argument("--details", default=DEFAULT_DETAILS,
                     help="semicolon-separated detail-crop descriptions (2 items)")
@@ -240,7 +242,12 @@ def main():
     out_dir = os.path.abspath(args.out) if args.out else os.path.join(os.path.dirname(src), "charcard")
     os.makedirs(out_dir, exist_ok=True)
 
-    expressions = [e.strip() for e in args.expressions.split(";") if e.strip()]
+    expression_text = args.expressions if args.expressions is not None else (
+        DEFAULT_SPLIT_EXPRESSIONS if args.split else DEFAULT_EXPRESSIONS)
+    expressions = [e.strip() for e in expression_text.split(";") if e.strip()]
+    expected_count = 6 if args.split else 4
+    if len(expressions) != expected_count:
+        ap.error(f"--expressions requires {expected_count} semicolon-separated items")
     details = [d.strip() for d in args.details.split(";") if d.strip()]
 
     ref_name, ref_local, ref_size = upload_ref(args.server, src, f"{safe}-ref.png")
