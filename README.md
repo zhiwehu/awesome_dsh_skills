@@ -17,6 +17,18 @@ Each skill in this repository is a self-contained directory with a `SKILL.md` at
 | [**dsh-image-book**](skills/dsh-image-book/) | Generates complete English picture-comic books (绘本 / 漫画) end to end: story design, character-consistent page prompts, ComfyUI generation, OCR verification of rendered text, PDF binding. | macOS, Python 3.9+, Swift CLI, a local ComfyUI server with Qwen-Image-2.1 |
 | [**dsh-character-card**](skills/dsh-character-card/) | Turns one image of any character into a character design card (角色卡): front / 45° / side / back views, expressions, detail crops, identity-locked via Qwen-Image-2.1 reference mode, plus a reusable character block for downstream consistency. | Python 3.9+ with Pillow, a ComfyUI server with Qwen-Image-2.1 |
 
+### Local image generation
+
+Three skills that draw on your own machine through ComfyUI — offline, free, no API key, nothing uploaded. They were benchmarked side by side on the same MacBook Pro (M4 Max, 128 GB); each row below says what that model is actually good at.
+
+| Skill | What it does | Needs |
+|-------|--------------|-------|
+| [**flux3-klein**](skills/flux3-klein/) | Photoreal / cinematic / product / landscape stills with FLUX 3 Klein. The most photoreal and the most prompt-literal of the three: skin texture, knit, bokeh, complex camera angles. 16 steps, ~105 s at 1024×1344; ≥2048² needs tiled VAE decode on MPS. | macOS, Python 3.9+, a local ComfyUI with the FLUX 3 Klein weights |
+| [**moss-image**](skills/moss-image/) | Text-to-image with MOSS-Image (5B DiT + Qwen3.5-9B encoder, Apache-2.0). Its edge is **rendered text**: legible Chinese blackboards, menus, shop signs, posters, where other local models dissolve into pseudo-glyphs. 8 steps, ~70 s. | macOS, Python 3.9+, ComfyUI 0.42+ with the MOSS weights and the community 8-step DMD LoRA |
+| [**qwen-image-2-1-turbo**](skills/qwen-image-2-1-turbo/) | 8-step Qwen-Image-2.1-Turbo: text-to-image, **image editing**, transparent PNG (native RGBA), LoRA stacking, plus base-model and SDXL fallback routes. | macOS, Python 3.10+, a local ComfyUI with the Qwen-Image-2.1 weights and the `SigmasFromList` node |
+
+*Pick by task, not by size: photoreal stills → flux3-klein, dense text → moss-image, editing or transparency → qwen-image-2-1-turbo.*
+
 *More skills land here as they are packaged. Each one keeps its own README with setup and usage detail.*
 
 ---
@@ -99,7 +111,10 @@ awesome_dsh_skills/
 ├── docs/images/              ← screenshots used by this README
 └── skills/
     ├── dsh-image-book/       ← one directory per skill
-    └── dsh-character-card/
+    ├── dsh-character-card/
+    ├── flux3-klein/
+    ├── moss-image/
+    └── qwen-image-2-1-turbo/
 ```
 
 ---

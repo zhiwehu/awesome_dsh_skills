@@ -1,0 +1,51 @@
+{
+ "_comment": "Declarative routing table for the moss-image skill. Rules are evaluated top-down; the first rule whose `when` ALL match wins. `not` is checked after `when`. Same-slot conflicts keep the higher priority rule.",
+ "version": 3,
+ "updated": "2026-10-24",
+ "defaults": {
+  "note": "No rule matched: plain MOSS-Image, no LoRA. That is usually the right answer for general requests."
+ },
+ "loras": {
+  "MOSSRealisticSnapshotV1.safetensors": {
+   "trigger": "moss_realism_v3",
+   "note": "photo realism / phone snapshot look",
+   "strength": 0.7,
+   "slot": "look"
+  }
+ },
+ "rules": [
+  {
+   "id": "photo-realism",
+   "when": {
+    "any": [
+     "photo",
+     "photograph",
+     "photorealistic",
+     "candid",
+     "snapshot",
+     "phone",
+     "amateur",
+     "street photo",
+     "现实",
+     "实拍",
+     "随手拍",
+     "照片"
+    ]
+   },
+   "not": [
+    "illustration",
+    "anime",
+    "painting",
+    "watercolor",
+    "3d render",
+    "cartoon",
+    "插画",
+    "动漫"
+   ],
+   "use": [
+    "MOSSRealisticSnapshotV1.safetensors"
+   ],
+   "reason": "user asked for a photograph -> realism LoRA sharpens texture and light"
+  }
+ ]
+}
